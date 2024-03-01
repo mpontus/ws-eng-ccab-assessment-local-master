@@ -1,0 +1,16 @@
+###
+# @name Reset
+POST http://127.0.0.1:3000/reset
+Content-Type: application/json
+
+{ "account": "test" }
+
+###
+# @name Charge
+POST http://127.0.0.1:3000/charge
+Content-Type: application/json
+
+{
+    "account": "test",
+    "charges": 15 
+}
