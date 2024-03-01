@@ -1,5 +1,5 @@
 import express from "express";
-import { createClient } from "redis";
+import { createClient, WatchError } from "redis";
 import { json } from "body-parser";
 
 const DEFAULT_BALANCE = 100;
@@ -41,6 +41,12 @@ async function charge(account: string, charges: number): Promise<ChargeResult> {
         } else {
             return { isAuthorized: false, remainingBalance: balance, charges: 0 };
         }
+    } catch (e) {
+        if (e instanceof WatchError) {
+            console.log("Retrying charge due to concurrent change");
+            return charge(account, charges);
+        }
+        throw e;
     } finally {
         await client.disconnect();
     }
